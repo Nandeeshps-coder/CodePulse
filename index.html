@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodePulse - Online Code Editor</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Import CodeMirror for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/eclipse.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/dialog/dialog.min.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="logo">
+                <i class="fa-solid fa-code"></i>
+                <span>CodePulse</span>
+            </div>
+            <div class="nav-actions">
+                <button id="format-btn" class="btn" title="Format Code">
+                    <i class="fa-solid fa-align-left"></i> Format
+                </button>
+                <button id="find-replace-btn" class="btn" title="Find & Replace (Ctrl+F)">
+                    <i class="fa-solid fa-search"></i> Find
+                </button>
+                <button id="run-btn" class="btn primary-btn" title="Run (Ctrl+Enter)">
+                    <i class="fa-solid fa-play"></i> Run
+                </button>
+                <button id="save-btn" class="btn" title="Save (Ctrl+S)">
+                    <i class="fa-solid fa-save"></i> Save
+                </button>
+                <button id="download-btn" class="btn" title="Download">
+                    <i class="fa-solid fa-download"></i>
+                </button>
+                <div class="theme-toggle">
+                    <input type="checkbox" id="theme-switch" class="theme-switch">
+                    <label for="theme-switch" class="theme-switch-label">
+                        <i class="fa-solid fa-sun"></i>
+                        <i class="fa-solid fa-moon"></i>
+                        <span class="ball"></span>
+                    </label>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="file-header">
+                    <h3>Files</h3>
+                    <button id="new-file-btn" class="icon-btn" title="New File">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+                <div class="file-list" id="file-list">
+                    <!-- Files will be added here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="content-area">
+                <!-- Tabs for files -->
+                <div class="tabs-container" id="tabs-container">
+                    <!-- Tabs will be added here by JavaScript -->
+                </div>
+
+                <!-- Code editor area -->
+                <div class="editor-container">
+                    <div id="editor-wrapper">
+                        <!-- CodeMirror will be mounted here -->
+                    </div>
+                </div>
+                
+                <!-- Resizable Handle -->
+                <div class="resize-handle" id="resize-handle"></div>
+                
+                <!-- Console Output Panel -->
+                <div class="console-panel" id="console-panel">
+                    <div class="console-header">
+                        <div class="console-tabs">
+                            <button id="output-tab" class="console-tab active">Output</button>
+                            <button id="input-tab" class="console-tab">Input (STDIN)</button>
+                        </div>
+                        <button id="clear-console-btn" class="icon-btn" title="Clear Console">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                    <div id="console-output-panel" class="console-content active">
+                        <div class="console-output" id="console-output"></div>
+                    </div>
+                    <div id="console-input-panel" class="console-content">
+                        <textarea id="stdin-input" class="stdin-textarea" placeholder="Enter input for your program here (STDIN)..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New File Modal -->
+    <div class="modal" id="new-file-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New File</h3>
+                <button id="close-modal-btn" class="icon-btn">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="file-name">File Name:</label>
+                    <input type="text" id="file-name" placeholder="main.py">
+                </div>
+                <div class="form-group">
+                    <label for="file-language">Language:</label>
+                    <select id="file-language">
+                        <option value="python">Python (.py)</option>
+                        <option value="javascript">JavaScript (.js)</option>
+                        <option value="java">Java (.java)</option>
+                        <option value="c">C (.c)</option>
+                        <option value="cpp">C++ (.cpp)</option>
+                        <option value="csharp">C# (.cs)</option>
+                        <option value="ruby">Ruby (.rb)</option>
+                        <option value="go">Go (.go)</option>
+                        <option value="php">PHP (.php)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="template-select">Template:</label>
+                    <select id="template-select">
+                        <option value="empty">Empty File</option>
+                        <option value="basic">Basic Template</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="create-file-btn" class="btn primary-btn">Create</button>
+                <button id="cancel-file-btn" class="btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <p>Executing code...</p>
+    </div>
+
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/ruby/ruby.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/go/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js"></script>
+    
+    <!-- CodeMirror addons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/search/search.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/search/searchcursor.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/dialog/dialog.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/brace-fold.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/indent-fold.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/comment-fold.min.js"></script>
+    
+    <!-- Code formatting libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-html.min.js"></script>
+    
+    <!-- Split.js for resizable panels -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.5/split.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="js/templates.js"></script>
+    <script src="js/editor.js"></script>
+    <script src="js/file-manager.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html> 
