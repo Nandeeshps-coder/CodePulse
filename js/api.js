@@ -4,10 +4,9 @@ class CodeExecutionAPI {
         // API configuration
         this.apiUrl = 'https://judge0-ce.p.rapidapi.com';
         
-        // Try to get API key from .env or use a placeholder
-        // Note: For browser environments, the API key needs to be set before deployment
-        // or provided through a backend proxy
-        const apiKey = process.env ? process.env.RAPIDAPI_KEY : 'YOUR_RAPIDAPI_KEY';
+        // DEMO ONLY: Using direct API key for showcase purposes
+        // In a real production app, this would be handled by server-side code
+        const apiKey = 'f9d9258571mshb82f5229ae6c6e0p110cbfjsncdb34c5d12e2';
         
         this.headers = {
             'content-type': 'application/json',

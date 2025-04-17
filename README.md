@@ -4,6 +4,16 @@ A fully functional online code editor with support for multiple programming lang
 
 ![CodePulse Screenshot](https://via.placeholder.com/800x450.png?text=CodePulse+Online+Code+Editor)
 
+## ⚠️ Demo Notice
+
+This repository includes an API key for **DEMONSTRATION PURPOSES ONLY**. In a real production application, you should:
+
+1. **NEVER** commit API keys to a public repository
+2. Use environment variables on your server
+3. Use a backend proxy to make API calls securely
+
+The current setup is only meant to showcase the project's functionality.
+
 ## Features
 
 - **Modern UI/UX**: Responsive layout, dark/light mode toggle, and intuitive design
